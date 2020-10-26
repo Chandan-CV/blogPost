@@ -10,3 +10,4 @@ const IndexScreen= ()=>{
         </View>
     );
 } 
+export default IndexScreen;
