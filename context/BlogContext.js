@@ -1,18 +1,11 @@
+import JasonServer from "../api/JasonServer";
 import createDataContext from "./createDataContext";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "addBlog":
-      console.log("adding the blog post")
-      return [
-        ...state,
-        {
-          title: action.payload.title,
-          id: Math.floor(Math.random() * 99999),
-          content: action.payload.content,
-        },
-      ];
-      case "editBlogPost":
+    case "getBlogPost":
+      return action.payload;
+     case "editBlogPost":
        return state.map((blogpost)=>{
         if(blogpost.id === action.payload.id)
         {
@@ -31,14 +24,29 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+const getBlogPost =(dispatch) =>
+{
+return async()=>{
+const response =await JasonServer.get("/blogposts")
+
+dispatch({type:"getBlogPost",payload:response.data})
+}
+
+}
+
+
 const addBlogPost = (dispatch) => {
-  return (title,content) => {
-    dispatch({ type: "addBlog", payload:{title,content} });
+  return async (title,content,callback) => {
+    await JasonServer.post("/blogposts",{title,content})
+    callback();
   };
 };
 const editBlogPost =(dispatch)=>
 {
-  return(id,title,content,navi)=>{
+  return async(id,title,content,navi)=>{
+    await JasonServer.put(`/blogposts/${id}`,{title,content})
+    
     dispatch({type:"editBlogPost",payload:{id,title,content}})
     navi();
   }
@@ -46,15 +54,16 @@ const editBlogPost =(dispatch)=>
 const deleteBlogPost =(dispatch)=>
 {
  
-  return(id)=>
+  return async(id)=>
   {
-   dispatch({type:"deleteBlogPost", payload:id})
+  await JasonServer.delete(`/blogposts/${id}`);
+ dispatch({type:"deleteBlogPost",payload:id})
   }
 }
 
 
 export const { Context, Provider } = createDataContext(
   reducer, 
-  [{title:"Test Header",content:"Test constent lololollll",id:1}],
-  {addBlogPost,deleteBlogPost,editBlogPost}
+  [],
+  {addBlogPost,deleteBlogPost,editBlogPost,getBlogPost}
   );

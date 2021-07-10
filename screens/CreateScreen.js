@@ -7,8 +7,7 @@ const CreateScreen=({navigation})=>
 {
     const addClicked=(title,content)=>
     {
-        addBlogPost(title,content)
-        navigation.navigate("Index screen")
+        addBlogPost(title,content,()=>{navigation.navigate("Index screen")})
     }
     const {addBlogPost} = useContext(Context);
    return(

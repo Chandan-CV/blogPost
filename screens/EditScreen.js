@@ -8,7 +8,7 @@ const EditScreen=({navigation})=>
     const {editBlogPost}= useContext(Context);
     const data = navigation.getParam("data")
     const save=(title,content)=>{
-        editBlogPost(data.id,title,content,()=>{navigation.pop()})
+        editBlogPost(data.id,title,content,()=>{navigation.navigate("Index screen")})
         
     }
 return(

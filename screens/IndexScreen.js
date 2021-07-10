@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext,useEffect } from "react";
 import { View, Text, FlatList, Button, StyleSheet } from "react-native";
 import {Context} from "../context/BlogContext";
 import { Feather } from '@expo/vector-icons'; 
@@ -8,8 +8,18 @@ import { Entypo } from '@expo/vector-icons';
 
 const IndexScreen = ({navigation}) => {
   
-  const { state,deleteBlogPost } = useContext(Context);
-  console.log("check")
+  const { state,deleteBlogPost,getBlogPost } = useContext(Context);
+  useEffect(()=>{
+    getBlogPost();
+
+    const listener=navigation.addListener("didFocus",()=>{
+      getBlogPost();
+    })
+
+    return ()=>{
+      listener.remove()
+    }
+  },[])
   
   return (
     <View style={styles.main}>
@@ -20,18 +30,20 @@ const IndexScreen = ({navigation}) => {
         keyExtractor={(data) => (data.id).toString()}
         
         renderItem={({ item }) => {
-          return <TouchableOpacity onPress={()=>{navigation.navigate("Show Screen",{item})}}>
-          <View style={styles.row}>
-       
+          return( 
+            <View style={styles.row}>
+          <TouchableOpacity onPress={()=>{navigation.navigate("Show Screen",{item})}}>
+          <View style={{width:300}}>
           <Text style={styles.title}>{item.title}- id {item.id}</Text>
-          
+          </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={()=>{deleteBlogPost(item.id)}}>
           <Feather name="trash" size={26} color="black"/>
           </TouchableOpacity>
+          
           </View>
           
-          </TouchableOpacity>
-          
+          ); 
         }}
       />
     </View>
